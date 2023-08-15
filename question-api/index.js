@@ -6,7 +6,7 @@ const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
-mongoose.connect('mongodb://127.0.0.1:27017/questions', {
+mongoose.connect('mongodb+srv://premy:Prem%40555@mycluster.rlwbmeg.mongodb.net/questions', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -29,6 +29,17 @@ const questionSchema = new mongoose.Schema({
 });
 
 const Question = mongoose.model('Question', questionSchema);
+
+app.get('/questions', async (req, res) => {
+    try {
+      const allQuestions = await Question.find();
+      res.json(allQuestions);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 
 app.get('/questions/:questionId', async (req, res) => {
   const questionId = req.params.questionId;
