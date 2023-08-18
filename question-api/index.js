@@ -20,7 +20,6 @@ mongoose.connect('mongodb+srv://premy:Prem%40555@mycluster.rlwbmeg.mongodb.net/q
 
 
 const questionSchema = new mongoose.Schema({
-  questionId: {type: Number},
   question: {type: String},
   option1: {type: String},
   option2: {type: String},
