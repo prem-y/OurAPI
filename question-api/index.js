@@ -4,6 +4,10 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 var cors = require("cors");
 app.use(cors());
+mongoose.set("strictQuery", false);
+
+const { ObjectId } = require("mongodb");
+
 
 app.use(express.json());
 
@@ -18,6 +22,8 @@ mongoose.connect('mongodb+srv://premy:Prem%40555@mycluster.rlwbmeg.mongodb.net/q
 .then(() => console.log("MongoDB is connected"))
 .catch((err) => console.log(err));
 
+
+var conn = mongoose.connection;
 
 const questionSchema = new mongoose.Schema({
   question: {type: String},
@@ -84,16 +90,24 @@ app.put('/questions/:questionId', async (req, res) => {
   }
 });
 
-app.post("questions/delete", async (req, res) => {
-  const id = new ObjectId(req.body.id);
-  console.log(id);
+
+
+app.post("/questions/delete", async (req, res) => {
+  const id = req.body.id;
+
   try {
-    await Question.deleteOne({ _id: id });
-    res.status(204).send("Success");
+    const result = await Question.deleteOne({ _id: ObjectId(id) });
+    if (result.deletedCount === 0) {
+      res.status(404).send("No questions found");
+    } else {
+      res.status(204).send("Success");
+    }
   } catch (error) {
     res.status(500).send("Error deleting question");
   }
 });
+
+
 
 
 
