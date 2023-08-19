@@ -45,19 +45,19 @@ app.get('/questions', async (req, res) => {
   });
   
 
-app.get('/questions/:questionId', async (req, res) => {
-  const questionId = req.params.questionId;
+// app.get('/questions/:questionId', async (req, res) => {
+//   const questionId = req.params.questionId;
 
-  try {
-    const question = await Question.findOne({ questionId });
-    if (!question) {
-      return res.status(404).json({ error: 'Question not found' });
-    }
-    res.json(question);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+//   try {
+//     const question = await Question.findOne({ questionId });
+//     if (!question) {
+//       return res.status(404).json({ error: 'Question not found' });
+//     }
+//     res.json(question);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 app.post('/questions', async (req, res) => {
     const newQuestion = req.body;
@@ -84,16 +84,18 @@ app.put('/questions/:questionId', async (req, res) => {
   }
 });
 
-app.delete('/questions/:questionId', async (req, res) => {
-  const questionId = req.params.questionId;
-
+app.post("questions/delete", async (req, res) => {
+  const id = new ObjectId(req.body.id);
+  console.log(id);
   try {
-    await Question.findOneAndDelete({ questionId });
-    res.json({ message: 'Question deleted successfully' });
+    await Question.deleteOne({ _id: id });
+    res.status(204).send("Success");
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).send("Error deleting question");
   }
 });
+
+
 
 app.post('/questions/:questionId/like', async (req, res) => {
   const questionId = req.params.questionId;
@@ -112,11 +114,13 @@ app.post('/questions/:questionId/like', async (req, res) => {
   }
 });
 
-app.get('/questions/published/:publishedAuthorname', async (req, res) => {
-  const publishedAuthorname = req.params.publishedAuthorname;
+app.get('/questions/:username', async (req, res) => {
+  const name = req.params.username;
 
   try {
-    const authorQuestions = await Question.find({ publishedAuthorname });
+    const authorQuestions = await Question.find({
+      username: { $eq: name }
+    });
     res.json(authorQuestions);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
