@@ -78,15 +78,15 @@ app.put('/questions/:questionId', async (req, res) => {
 
 
 
-app.post("/questions/delete", async (req, res) => {
-  const id = req.body.id;
-
+app.delete("/questions/:deleteId", async (req, res) => {
   try {
-    const result = await Question.deleteOne({ _id: ObjectId(id) });
-    if (result.deletedCount === 0) {
-      res.status(404).send("No questions found");
+    const deleteId = req.params.deleteId;
+    let findQuestion = await Question.findById({ _id: deleteId });
+    if (!findQuestion) {
+      return res.status(404).send({ status: false, msg: "Question Not found" });
     } else {
-      res.status(204).send("Success");
+      const deleteQuestion = await Question.deleteOne({ _id: deleteId})
+            return res.status(200).send({ status: true, message: "Book Data Deleted Successfully", data: deleteQuestion })
     }
   } catch (error) {
     res.status(500).send("Error deleting question");
@@ -127,12 +127,6 @@ app.get('/questions/:username', async (req, res) => {
   }
 });
 
-// app.get('/api/random-question', async (req, res) => {
-//   const questions = await Question.find();
-//   const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-
-//   res.json(randomQuestion);
-// });
 
 app.get('/api/random-question', async (req, res) => {
   const questions = await Question.find();
