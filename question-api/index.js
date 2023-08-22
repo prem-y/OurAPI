@@ -51,20 +51,6 @@ app.get('/questions', async (req, res) => {
   });
   
 
-// app.get('/questions/:questionId', async (req, res) => {
-//   const questionId = req.params.questionId;
-
-//   try {
-//     const question = await Question.findOne({ questionId });
-//     if (!question) {
-//       return res.status(404).json({ error: 'Question not found' });
-//     }
-//     res.json(question);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
-
 app.post('/questions', async (req, res) => {
     const newQuestion = req.body;
   
@@ -141,9 +127,27 @@ app.get('/questions/:username', async (req, res) => {
   }
 });
 
+// app.get('/api/random-question', async (req, res) => {
+//   const questions = await Question.find();
+//   const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+
+//   res.json(randomQuestion);
+// });
+
 app.get('/api/random-question', async (req, res) => {
   const questions = await Question.find();
-  const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+
+  // Create a set to store the questions that have already been fetched.
+  const fetchedQuestions = new Set();
+
+  // Loop through the questions and find a random question that has not been fetched yet.
+  let randomQuestion;
+  do {
+    randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+  } while (fetchedQuestions.has(randomQuestion));
+
+  // Add the random question to the set of fetched questions.
+  fetchedQuestions.add(randomQuestion);
 
   res.json(randomQuestion);
 });
