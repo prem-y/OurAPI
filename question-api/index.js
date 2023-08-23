@@ -86,7 +86,7 @@ app.delete("/questions/:deleteId", async (req, res) => {
       return res.status(404).send({ status: false, msg: "Question Not found" });
     } else {
       const deleteQuestion = await Question.deleteOne({ _id: deleteId})
-            return res.status(200).send({ status: true, message: "Book Data Deleted Successfully", data: deleteQuestion })
+            return res.status(200).send({ status: true, message: "Question Deleted Successfully", data: deleteQuestion })
     }
   } catch (error) {
     res.status(500).send("Error deleting question");
